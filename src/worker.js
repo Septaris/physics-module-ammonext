@@ -365,6 +365,40 @@ const createSoftBody = (description) => {
   return body;
 };
 
+
+const createGhostObject = (description) => {
+  // The btGhostObject can keep track of all objects that are overlapping
+  // By default, this overlap is based on the AABB
+  // This is useful for creating a character controller, collision sensors/triggers, explosions etc.
+  let ghostObject;
+
+  // check the ghost object type
+  switch (description.type) {
+  case 'ghostObject':
+    // A regular ghost object used for things like triggers where the details of the overlap don't matter as much.
+    {
+      ghostObject = Ammo.btGhostObject();
+
+      break;
+    }
+  case 'pairCachingGhostObject':
+    // A pair caching ghost object containing a cached list of overlapping objects.
+    // Each pair is two objects that are overlapping in broadphase collision detection.
+    {
+      ghostObject = Ammo.btPairCachingGhostObject();
+
+      break;
+    }
+  default:
+    // Not recognized
+    return;
+  }
+
+  return ghostObject;
+
+};
+
+
 public_functions.init = (params = {}) => {
   if (params.noWorker) {
     window.Ammo = new params.ammo();
